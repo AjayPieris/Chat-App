@@ -1,36 +1,138 @@
-import React from 'react'
-import './chat.css'
+import React, { useState } from 'react';
+import './chat.css';
+import EmojiPicker from 'emoji-picker-react';
 
-function chat() {
+function Chat() {
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState("");
+
+  const handleEmoji = (emojiData, event) => {
+    setText(prev => prev + emojiData.emoji);
+  };
+
   return (
     <div className='chat'>
-      <div className='chat'>
-        <div className='top'>
-          <div className='user'>
-            <img src='src\assets\public\avatar.png'/>
-            <div className="texts">
-              <span>Vijay</span>
-              <p>Lorem ipsum dolor </p>
-            </div>
-          </div>
-          <div className='icons'>
-            <img src='.\src\assets\public\phone.png' alt='' />
-             <img src='.\src\assets\public\video.png' alt='' />
-              <img src='.\src\assets\public\info.png' alt='' />
-
+      {/* Top Bar */}
+      <div className='top'>
+        <div className='user'>
+          <img src='src/assets/public/avatar.png' alt='avatar' />
+          <div className="texts">
+            <span>Vijay</span>
+            <p>Lorem ipsum dolor</p>
           </div>
         </div>
-        <div className='center'></div>
-        <div className="bottom">
-          <div className='icons'></div>
-          <input type='text' placeholder='Type a message'/>
-          <div className='emoji'>
-            <img src='.\src\assets\public\emoji.png'  alt=''/>
+        <div className='icons'>
+          <img src='./src/assets/public/phone.png' alt='phone' />
+          <img src='./src/assets/public/video.png' alt='video' />
+          <img src='./src/assets/public/info.png' alt='info' />
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className='center'>
+        <div className='message own'>
+          <div className='texts'>
+            <p>
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora,
+              natus voluptates saepe delectus dolore accusantium aperiam dolorum
+              veniam quos obcaecati dicta eaque dignissimos qui nihil tempore sint,
+              est cum inventore!
+            </p>
+            <span>1 min ago</span>
+          </div>
+        </div>
+        <div className='message'>
+          <img src='./src/assets/public/avatar.png' alt='avatar' />
+          <div className='texts'>
+            <p>
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora,
+              natus voluptates saepe delectus dolore accusantium aperiam dolorum
+              veniam quos obcaecati dicta eaque dignissimos qui nihil tempore sint,
+              est cum inventore!
+            </p>
+            <span>1 min ago</span>
+          </div>
+        </div>
+        <div className='message own'>
+          <div className='texts'>
+            <p>
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora,
+              natus voluptates saepe delectus dolore accusantium aperiam dolorum
+              veniam quos obcaecati dicta eaque dignissimos qui nihil tempore sint,
+              est cum inventore!
+            </p>
+            <span>1 min ago</span>
+          </div>
+        </div>
+        <div className='message'>
+          <img src='./src/assets/public/avatar.png' alt='avatar' />
+          <div className='texts'>
+            <p>
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora,
+              natus voluptates saepe delectus dolore accusantium aperiam dolorum
+              veniam quos obcaecati dicta eaque dignissimos qui nihil tempore sint,
+              est cum inventore!
+            </p>
+            <span>1 min ago</span>
+          </div>
+        </div>
+        <div className='message own'>
+          <div className='texts'>
+            <p>
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora,
+              natus voluptates saepe delectus dolore accusantium aperiam dolorum
+              veniam quos obcaecati dicta eaque dignissimos qui nihil tempore sint,
+              est cum inventore!
+            </p>
+            <span>1 min ago</span>
+          </div>
+        </div>
+        <div className='message'>
+          <img src='./src/assets/public/avatar.png' alt='avatar' />
+          <div className='texts'>
+            <p>
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora,
+              natus voluptates saepe delectus dolore accusantium aperiam dolorum
+              veniam quos obcaecati dicta eaque dignissimos qui nihil tempore sint,
+              est cum inventore!
+            </p>
+            <span>1 min ago</span>
           </div>
         </div>
       </div>
+
+      {/* Bottom Input Bar */}
+      <div className='bottom'>
+        <div className='icons'>
+          <img src='./src/assets/public/img.png' alt='image' />
+          <img src='./src/assets/public/camera.png' alt='camera' />
+          <img src='./src/assets/public/mic.png' alt='mic' />
+        </div>
+
+        <input
+          type='text'
+          placeholder='Type a message'
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+
+        <div className='emoji'>
+          <img
+            src='./src/assets/public/emoji.png'
+            alt='emoji'
+            onClick={() => setOpen(prev => !prev)}
+          />
+          {open && (
+            <div className='picker'>
+              <EmojiPicker onEmojiClick={handleEmoji} />
+            </div>
+          )}
+        </div>
+
+        <button className='sendButton'>Send</button>
+      </div>
     </div>
-  )
+  );
 }
 
-export default chat
+export default Chat;
