@@ -78,6 +78,7 @@ function Chat() {
         </div>
         <div className='message own'>
           <div className='texts'>
+            <img src='./src/assets/public/favicon.png'/>
             <p>
               Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora,
               natus voluptates saepe delectus dolore accusantium aperiam dolorum

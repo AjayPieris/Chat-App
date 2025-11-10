@@ -1,8 +1,9 @@
 .chat {
-  flex: 1;
+  flex: 1; /* takes remaining width */
   display: flex;
   flex-direction: column;
-  width: 600px;
+  min-width: 600px;  /* minimum width */
+  max-width: 800px;  /* maximum width */
   height: 100%;
   background-color: #0f192f;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
@@ -104,7 +105,7 @@
 .message .texts {
   display: flex;
   flex-direction: column;
-  max-width: 70%;
+  max-width: 75%;
   word-wrap: break-word;
 }
 
@@ -122,16 +123,60 @@
   margin-top: 2px;
 }
 
-/* Own messages on the right */
+/* Own messages (sent by you) */
 .message.own {
   flex-direction: row-reverse;
+  align-items: flex-end;
 }
 
+/* Text container */
+.message.own .texts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align both image & text to right */
+  max-width: 70%;
+  gap: 5px;
+}
+
+/* Own message image (like WhatsApp) */
+.message.own .texts img {
+  width: 200px;
+  height: auto;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Text bubble under image */
 .message.own .texts p {
   background-color: #5183fe;
   color: white;
-  border-bottom-right-radius: 0;
+  border-radius: 16px 16px 0 16px;
+  padding: 10px 14px;
+  max-width: 100%;
+  word-wrap: break-word;
+  text-align: left;
 }
+
+/* Timestamp aligned right below text */
+.message.own .texts span {
+  font-size: 11px;
+  color: #a5a5a5;
+  text-align: right;
+  width: 100%;
+}
+
+
+/* For consistency in normal message images */
+.message:not(.own) .texts img {
+  width: 180px;
+  height: auto;
+  border-radius: 14px;
+  object-fit: cover;
+  margin-bottom: 5px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
 
 /* Bottom input area */
 .bottom {
