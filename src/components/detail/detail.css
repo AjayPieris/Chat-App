@@ -338,6 +338,7 @@
   transition: transform 300ms cubic-bezier(.23, 1, .32, 1), box-shadow var(--transition), filter var(--transition);
 }
 
+
 .detail button:hover {
   transform: translateY(-4px);
   box-shadow:
@@ -425,4 +426,118 @@
   .detail button {
     margin: 0 16px 0;
   }
+}
+
+/* Logout button design — paste at the end of detail.css without changing JSX */
+
+/* Base style */
+.detail .info > .logout {
+  /* Local accents (no dependency on existing variables) */
+  --logout-accent-1: #22d3ee;   /* cyan */
+  --logout-accent-2: #60a5fa;   /* blue */
+  --logout-bg: rgba(255,255,255,0.06);
+  --logout-bg-hover: rgba(255,255,255,0.10);
+  --logout-text: #e6f1ff;
+
+  position: static;                 /* ensure it doesn't inherit sticky */
+  display: block;
+  width: auto;
+  margin: 15px 22px 5px;           /* sits neatly below "Block User" */
+  padding: 18px 10px;
+  border-radius: 12px;
+
+  /* Gradient border with glass interior */
+  background:
+    linear-gradient(145deg, rgba(12,18,32,0.9), rgba(10,16,27,0.9)) padding-box,
+    linear-gradient(120deg, var(--logout-accent-1), var(--logout-accent-2)) border-box;
+  border: 1px solid transparent;
+
+  color: var(--logout-text);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  text-align: center;
+  justify-content: center;
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 26px -12px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(255,255,255,0.08) inset;
+  backdrop-filter: blur(12px);
+  transition:
+    transform 300ms cubic-bezier(.23,1,.32,1),
+    box-shadow 260ms ease,
+    color 260ms ease,
+    background 260ms ease,
+    filter 260ms ease;
+  outline: none;
+  user-select: none;
+  will-change: transform, box-shadow, background;
+  overflow: hidden;
+}
+
+/* Shine sweep */
+.detail .info > .logout::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(120deg,
+      transparent 0%,
+      rgba(255,255,255,0.18) 45%,
+      rgba(255,255,255,0.28) 50%,
+      rgba(255,255,255,0.18) 55%,
+      transparent 100%);
+  mix-blend-mode: overlay;
+  transform: translateX(-120%);
+  transition: transform 700ms ease, opacity 700ms ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.detail .info > .logout:hover::before {
+  transform: translateX(0%);
+  opacity: 1;
+}
+
+/* Hover */
+.detail .info > .logout:hover {
+  transform: translateY(-4px);
+  background:
+    linear-gradient(145deg, rgba(14,22,38,0.9), rgba(11,18,34,0.9)) padding-box,
+    linear-gradient(120deg, var(--logout-accent-1), var(--logout-accent-2)) border-box;
+  box-shadow:
+    0 16px 34px -12px rgba(0,0,0,0.65),
+    0 0 0 1px rgba(255,255,255,0.1) inset,
+    0 10px 28px -12px rgba(96,165,250,0.55);
+  filter: brightness(1.04);
+}
+
+/* Active */
+.detail .info > .logout:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow:
+    0 10px 22px -12px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.12) inset,
+    0 6px 18px -10px rgba(96,165,250,0.45);
+}
+
+/* Focus visibility for keyboard users */
+.detail .info > .logout:focus-visible {
+  outline: 2px solid var(--logout-accent-2);
+  outline-offset: 3px;
+  box-shadow:
+    0 0 0 4px rgba(96,165,250,0.35),
+    0 12px 30px -12px rgba(96,165,250,0.55),
+    0 0 0 1px rgba(255,255,255,0.14) inset;
+}
+
+/* Optional subtle pulse to indicate safe action (not destructive) */
+@keyframes logoutPulse {
+  0%, 100% { box-shadow: 0 10px 26px -12px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.08) inset; }
+  50% { box-shadow: 0 12px 28px -12px rgba(0,0,0,0.6), 0 0 16px -6px rgba(96,165,250,0.45), 0 0 0 1px rgba(255,255,255,0.08) inset; }
+}
+.detail .info > .logout.idle-pulse {
+  animation: logoutPulse 3.8s ease-in-out infinite;
 }
