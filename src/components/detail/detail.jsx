@@ -18,7 +18,7 @@ function detail() {
         </div>
         <div className="option">
           <div className="title">
-            <span>Privacy % help</span>
+            <span>Privacy & Help</span>
             <img src='./src/assets/public/arrowUp.png'/>
           </div>
         </div>
@@ -27,6 +27,33 @@ function detail() {
             <span>Shared Photos</span>
             <img src='./src/assets/public/arrowDown.png'/>
           </div>
+          <div className="photos">
+            <div className="photoItem">
+              <div className="photoDetail">
+              <img src='./src/assets/public/favicon.png'/>
+              <span>favicon.png</span> 
+            </div>
+            <img src='.\src\assets\public\download.png'/>
+          </div>
+         </div>
+          <div className="photos">
+            <div className="photoItem">
+              <div className="photoDetail">
+              <img src='./src/assets/public/favicon.png'/>
+              <span>favicon.png</span> 
+            </div>
+            <img src='.\src\assets\public\download.png'/>
+          </div>
+         </div>
+          <div className="photos">
+            <div className="photoItem">
+              <div className="photoDetail">
+              <img src='./src/assets/public/favicon.png'/>
+              <span>favicon.png</span> 
+            </div>
+            <img src='.\src\assets\public\download.png'/>
+          </div>
+         </div>
           <div className="photos">
             <div className="photoItem">
               <div className="photoDetail">

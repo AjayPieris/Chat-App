@@ -1,89 +1,455 @@
-.chatList{
-  flex: 1;
+/* ==========================================================================
+   Chat List Panel (chatlist.css)
+   Aesthetic: Dark frosted glass + luminous accents
+   NOTE: Do not change JSX. Class hooks: .chatList, .search, .searchbar,
+         .searchbar img, .searchbar input, .add, .item, .item img, .texts,
+         .texts span, .texts p
+   ========================================================================== */
+
+/* Root panel */
+.chatList {
+  --bg: linear-gradient(145deg,#141b26 0%, #0d121b 50%, #0a0f18 100%);
+  --panel: rgba(255,255,255,0.04);
+  --panel-strong: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.07);
+  --border-strong: rgba(255,255,255,0.16);
+  --accent: #4f8bff;
+  --accent-alt: #7fb2ff;
+  --danger: #ff5f6d;
+  --text-primary: #f5f7fb;
+  --text-secondary: #b6c0cc;
+  --text-faint: #7c8894;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --transition: 260ms cubic-bezier(.4,.14,.3,1);
+
+  position: relative;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* scroll appears only when needed */
-  scrollbar-width: thin; /* for Firefox */
-  scrollbar-color: rgba(255,255,255,0.2) transparent; /* for Firefox */
-  max-width: 350px;
- 
+  width: 320px;
+  min-width: 300px;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: system-ui,-apple-system,'Segoe UI',Roboto,Inter,Arial,sans-serif;
+  border-right: 1px solid var(--border);
+  backdrop-filter: blur(28px) saturate(140%);
+  box-shadow: 10px 0 28px -14px rgba(0,0,0,0.6);
+  animation: panelSlideIn .55s cubic-bezier(.16,.72,.29,1);
+  overflow: hidden;
+}
 
-    
-  .search{
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 20px;
+@keyframes panelSlideIn {
+  0% { opacity: 0; transform: translateX(-40px) scale(.98); }
+  50% { opacity: 1; }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
 
-    .searchbar{
-      flex: 1;
-      background-color: rgba(17, 25, 40, 0.5);
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      border-radius: 10px;
-      padding: 10px;
+/* --------------------------------------------------------------------------
+   Search Section
+   -------------------------------------------------------------------------- */
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 16px 12px;
+  background:
+    linear-gradient(130deg, rgba(79,139,255,0.12) 0%, rgba(79,139,255,0) 40%) var(--panel);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(18px);
+  z-index: 4;
+}
 
-      input{
-        background-color: transparent;
-        border: none;
-        outline: none;
-        color: white;
-        flex: 1;
-      }
+.searchbar {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px 10px 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.4), 0 6px 14px -8px rgba(0,0,0,0.55);
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+  overflow: hidden;
+}
 
-      img{
-        width: 20px;
-        height: 20px;
-      }
-    }
-    .add{
-        width: 36px;
-        height: 36px;
-        background-color: rgba(17, 25, 40, 0.5);
-        padding: 10px;
-        border-radius: 10px;
-        cursor: pointer;
-     }
+.searchbar:hover {
+  background: rgba(79,139,255,0.14);
+  border-color: rgba(79,139,255,0.6);
+}
+
+.searchbar:focus-within {
+  background: rgba(79,139,255,0.22);
+  border-color: rgba(79,139,255,0.8);
+  box-shadow: 0 0 0 3px rgba(79,139,255,0.35), 0 10px 24px -12px rgba(79,139,255,0.55);
+}
+
+.searchbar img {
+  width: 22px;
+  height: 22px;
+  opacity: .8;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.6));
+  transition: transform var(--transition), opacity var(--transition);
+}
+
+.searchbar:hover img {
+  transform: scale(1.08);
+  opacity: 1;
+}
+
+.searchbar input {
+  flex: 1 1 auto;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: .75rem;
+  font-weight: 500;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.searchbar input::placeholder {
+  color: var(--text-faint);
+  opacity: .85;
+}
+
+/* Add / Minus Toggle */
+.add {
+  width: 42px;
+  height: 42px;
+  padding: 9px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+  box-shadow: 0 4px 14px -8px rgba(0,0,0,0.6);
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition), filter var(--transition);
+  filter: saturate(.85);
+  position: relative;
+}
+
+.add:hover {
+  background: rgba(79,139,255,0.28);
+  transform: translateY(-4px) rotate(10deg);
+  box-shadow: 0 10px 20px -10px rgba(79,139,255,0.65);
+  filter: saturate(1.05);
+}
+
+.add:active {
+  transform: translateY(-1px) scale(.92);
+}
+
+/* Ripple on toggle click (no extra markup needed) */
+.add:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 6px rgba(79,139,255,.35);
+}
+
+/* --------------------------------------------------------------------------
+   List Items
+   -------------------------------------------------------------------------- */
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  background: transparent;
+  transition: background var(--transition), border-color var(--transition), transform var(--transition);
+  animation: itemFadeIn .55s ease;
+  max-width: 100%;
+}
+
+@keyframes itemFadeIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(79,139,255,.12) 0%, rgba(79,139,255,0) 55%);
+  opacity: 0;
+  transition: opacity var(--transition);
+  pointer-events: none;
+}
+
+.item:hover::before {
+  opacity: 1;
+}
+
+.item:hover {
+  background: rgba(255,255,255,0.04);
+  transform: translateY(-3px);
+}
+
+.item:active {
+  transform: translateY(-1px) scale(.98);
+}
+
+.item img {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.12);
+  box-shadow: 0 4px 10px -6px rgba(0,0,0,.65), 0 0 14px -4px rgba(79,139,255,.5);
+  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+  filter: saturate(.9);
+}
+
+.item:hover img {
+  transform: scale(1.06);
+  box-shadow: 0 6px 16px -8px rgba(0,0,0,.7), 0 0 22px -6px rgba(79,139,255,.65);
+  filter: saturate(1.15);
+}
+
+.texts {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.texts span {
+  font-size: .83rem;
+  font-weight: 600;
+  letter-spacing: .5px;
+  color: var(--text-primary);
+  text-shadow: 0 1px 2px rgba(0,0,0,.55);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.texts p {
+  margin: 0;
+  font-size: .7rem;
+  font-weight: 500;
+  letter-spacing: .8px;
+  color: var(--text-secondary);
+  opacity: .85;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color var(--transition), opacity var(--transition);
+}
+
+.item:hover .texts p {
+  color: var(--accent-alt);
+  opacity: 1;
+}
+
+/* Active (selected) item simulation class (if added externally) */
+.item.active,
+.item:focus-visible {
+  background: linear-gradient(135deg, rgba(79,139,255,0.35) 0%, rgba(79,139,255,0.12) 60%);
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgba(79,139,255,.55), 0 6px 18px -8px rgba(79,139,255,.55);
+  transform: translateY(-2px);
+}
+
+.item.active::before {
+  opacity: .6;
+}
+
+/* Separator subtle line (optional using nth-child) */
+.item + .item {
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+/* Scroll behavior for long lists */
+.chatList {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+.chatList::-webkit-scrollbar {
+  width: 10px;
+}
+.chatList::-webkit-scrollbar-track {
+  background: #0c131d;
+}
+.chatList::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg,#2f6ed6,#1c447a);
+  border: 2px solid #0c131d;
+  border-radius: 20px;
+}
+.chatList::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg,#4f8bff,#2b64c4);
+}
+
+/* Gradient sheen overlay */
+.chatList::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg,
+    transparent 0%,
+    rgba(255,255,255,0.03) 40%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.02) 60%,
+    transparent 100%);
+  mix-blend-mode: overlay;
+  animation: sheen 9s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes sheen {
+  0% { transform: translateX(-55%); }
+  100% { transform: translateX(55%); }
+}
+
+/* Pulsing accent for add toggle state difference:
+   We assume plus.png means "addMode true" and minus.png means false.
+   Use attribute selectors to subtle-glow when in add mode (plus icon). */
+.add[src*="plus"] {
+  box-shadow: 0 0 0 0 rgba(79,139,255,.6);
+  animation: pulseAccent 3.2s ease-in-out infinite;
+}
+@keyframes pulseAccent {
+  0%,100% { box-shadow: 0 0 0 0 rgba(79,139,255,.0); }
+  50% { box-shadow: 0 0 0 10px rgba(79,139,255,.0); }
+}
+
+/* If minus icon (closing) show danger accent */
+.add[src*="minus"] {
+  background: rgba(255,95,109,0.12);
+  border-color: rgba(255,95,109,0.4);
+  animation: pulseDanger 3.2s ease-in-out infinite;
+}
+@keyframes pulseDanger {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,95,109,.0); }
+  50% { box-shadow: 0 0 0 10px rgba(255,95,109,.0); }
+}
+
+/* Hover brightness variations */
+.add[src*="minus"]:hover {
+  background: rgba(255,95,109,0.28);
+  box-shadow: 0 10px 20px -10px rgba(255,95,109,0.55);
+}
+
+/* --------------------------------------------------------------------------
+   Empty list hint state (if you add a class externally)
+   -------------------------------------------------------------------------- */
+.chatList.empty::before {
+  content: 'No Chats Yet';
+  position: absolute;
+  top: 58%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 14px 20px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  font-size: .8rem;
+  letter-spacing: 2px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px -10px rgba(0,0,0,.55);
+  animation: hintPop .6s cubic-bezier(.23,1,.32,1);
+}
+
+@keyframes hintPop {
+  0% { opacity: 0; transform: translate(-50%,-60%) scale(.92); }
+  100% { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .chatList {
+    width: 280px;
+    min-width: 260px;
   }
-  .item{
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 20px;
-    cursor: pointer;
-    border-bottom: 1px solid #dddddd35;
-
-    img{
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-    .texts{
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-
-        span{
-            font-weight: 500;
-        }
-
-        p{
-            font-size: 14px;
-            font-weight: 300;
-            color: #a5a5a5;
-        }
-    }
+  .search {
+    padding: 14px 12px 10px;
+    gap: 10px;
   }
-  .icons{
-    display: flex;
-    gap: 20px;
-
-    img{
-      width: 20px;
-      height: 20px;
-    }
+  .searchbar {
+    padding: 8px 12px 8px 10px;
+  }
+  .searchbar input {
+    font-size: .68rem;
+    letter-spacing: 1.2px;
+  }
+  .add {
+    width: 38px;
+    height: 38px;
+    padding: 8px;
+  }
+  .item {
+    padding: 10px 14px;
+    gap: 12px;
+  }
+  .item img {
+    width: 46px;
+    height: 46px;
+  }
+  .texts span {
+    font-size: .78rem;
+  }
+  .texts p {
+    font-size: .62rem;
+    letter-spacing: .6px;
   }
 }
 
+@media (max-width: 520px) {
+  .chatList {
+    width: 100%;
+    min-width: unset;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .search {
+    padding: 12px 12px 8px;
+  }
+  .add {
+    width: 34px;
+    height: 34px;
+  }
+  .item {
+    padding: 10px 12px;
+  }
+  .item img {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Focus & Accessibility
+   -------------------------------------------------------------------------- */
+.searchbar:focus-visible,
+.item:focus-visible,
+.add:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 6px rgba(79,139,255,.35);
+}
+
+/* --------------------------------------------------------------------------
+   Performance hints
+   -------------------------------------------------------------------------- */
+.chatList,
+.search,
+.searchbar,
+.item,
+.add {
+  will-change: transform, background, box-shadow;
+  transform: translateZ(0);
+}

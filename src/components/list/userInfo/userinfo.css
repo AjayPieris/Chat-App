@@ -1,9 +1,9 @@
 .userinfo{
-    padding: 20px;
+   padding-right: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 350px;
+    max-width: 300px;
 
     .user{
         display: flex;
@@ -21,6 +21,7 @@
 .icons{
     display: flex;
     gap: 20px;
+    padding-top: 10px;
 
     img{
         width: 20px;
