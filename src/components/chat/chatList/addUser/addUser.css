@@ -1,0 +1,232 @@
+:root {
+  --au-bg: #ffffff;
+  --au-bg-muted: #f8fafc;
+  --au-text: #0f172a;
+  --au-text-muted: #64748b;
+  --au-border: rgba(2, 6, 23, 0.08);
+  --au-border-strong: rgba(2, 6, 23, 0.12);
+  --au-accent: #7c3aed;
+  --au-accent-2: #4f46e5;
+  --au-primary: #0ea5e9;
+  --au-primary-hover: #0284c7;
+  --au-shadow: 0 12px 40px rgba(2, 6, 23, 0.18);
+}
+
+/* Full-screen overlay to ensure correct global centering */
+.addUser-overlay {
+  position: fixed;
+  inset: 0;
+  padding: 16px;             /* breathing room on small screens */
+  background: rgba(17, 24, 39, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  z-index: 1000;             /* above app UI */
+}
+
+/* The centered card */
+.addUser-card {
+  width: min(520px, 94vw);
+  border-radius: 16px;
+  border: 1px solid var(--au-border);
+  background: var(--au-bg);
+  color: var(--au-text);
+  box-shadow: var(--au-shadow);
+  padding: 18px;
+  animation: au-pop 140ms ease-out forwards;
+}
+
+/* Header row */
+.addUser-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.addUser-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+.addUser-close {
+  inline-size: 36px;
+  block-size: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--au-border);
+  border-radius: 10px;
+  background: var(--au-bg-muted);
+  color: var(--au-text);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background .2s, transform .06s, box-shadow .2s, border-color .2s;
+}
+
+.addUser-close:hover {
+  background: #fff;
+  border-color: var(--au-accent);
+}
+
+.addUser-close:active {
+  transform: translateY(1px);
+}
+
+/* Form row */
+.addUser-card form {
+  display: flex;
+  gap: 10px;
+  padding: 4px 0;
+  margin-bottom: 12px;
+}
+
+.addUser-card input[type="text"] {
+  flex: 1;
+  height: 44px;
+  border: 1px solid var(--au-border);
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: 15px;
+  background: var(--au-bg-muted);
+  color: inherit;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+.addUser-card input[type="text"]::placeholder {
+  color: var(--au-text-muted);
+}
+
+.addUser-card input[type="text"]:focus {
+  background: #fff;
+  border-color: var(--au-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--au-accent) 20%, transparent);
+}
+
+.addUser-card form button {
+  height: 44px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--au-accent), var(--au-accent-2));
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: .2px;
+  cursor: pointer;
+  transition: transform .06s ease, filter .2s ease, box-shadow .2s ease;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+}
+
+.addUser-card form button:hover {
+  filter: brightness(1.05);
+}
+
+.addUser-card form button:active {
+  transform: translateY(1px);
+}
+
+/* Result row */
+.addUser-card .user {
+  margin-top: 6px;
+  padding: 12px;
+  border: 1px solid var(--au-border);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fff;
+}
+
+.addUser-card .detail {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.addUser-card .detail img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--au-border-strong);
+}
+
+.addUser-card .detail span {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* "Add User" button in result */
+.addUser-card .user > button {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: var(--au-primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, transform .06s, box-shadow .2s;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, .35);
+}
+
+.addUser-card .user > button:hover {
+  background: var(--au-primary-hover);
+}
+
+.addUser-card .user > button:active {
+  transform: translateY(1px);
+}
+
+/* Pop-in animation */
+@keyframes au-pop {
+  from { opacity: 0; transform: translateY(4px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --au-bg: rgba(17, 24, 39, 0.92);
+    --au-bg-muted: rgba(255, 255, 255, 0.06);
+    --au-text: #e5e7eb;
+    --au-text-muted: #94a3b8;
+    --au-border: rgba(255, 255, 255, 0.08);
+    --au-border-strong: rgba(255, 255, 255, 0.14);
+    --au-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  .addUser-card .user {
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+/* Small screens fine-tuning */
+@media (max-width: 420px) {
+  .addUser-card {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .addUser-card form {
+    gap: 8px;
+  }
+
+  .addUser-card input[type="text"] {
+    height: 42px;
+    border-radius: 10px;
+  }
+
+  .addUser-card form button {
+    height: 42px;
+    border-radius: 10px;
+  }
+}

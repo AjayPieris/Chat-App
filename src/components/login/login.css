@@ -1,0 +1,353 @@
+/* Login page modern glass UI with animations.
+   Scope all styles under .login to avoid leaking to other pages. */
+
+.login {
+  /* Theme tokens (scoped) */
+  --bg-1: #0b1220;
+  --card: rgba(255,255,255,0.06);
+  --card-strong: rgba(255,255,255,0.1);
+  --border: rgba(255,255,255,0.12);
+  --border-strong: rgba(255,255,255,0.2);
+  --text-primary: #eaf0ff;
+  --text-secondary: #b7c2d0;
+  --accent-1: #22d3ee; /* cyan */
+  --accent-2: #4f8bff; /* blue */
+  --accent-3: #6366f1; /* indigo */
+  --shadow-lg: 0 20px 40px -18px rgba(0,0,0,.65);
+  --shadow-md: 0 10px 28px -12px rgba(0,0,0,.55);
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --transition: 260ms cubic-bezier(.4,.14,.3,1);
+
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  align-items: center;
+  justify-items: center;
+  padding: 24px clamp(16px, 4vw, 40px);
+  color: var(--text-primary);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(79,139,255,0.08), transparent 60%),
+    radial-gradient(1000px 500px at 110% 110%, rgba(99,102,241,0.08), transparent 60%),
+    var(--bg-1);
+  overflow: hidden;
+  animation: fadeUp .6s cubic-bezier(.16,.72,.29,1) both;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Soft glow orbs */
+.login::before,
+.login::after {
+  content: '';
+  position: absolute;
+  filter: blur(60px);
+  opacity: .55;
+  pointer-events: none;
+  z-index: 0;
+  animation: float 8s ease-in-out infinite;
+}
+.login::before {
+  top: -120px; left: -120px;
+  width: 380px; height: 380px;
+  background: radial-gradient(circle at 30% 30%, rgba(79,139,255,.25), transparent 60%);
+  animation-delay: 0s;
+}
+.login::after {
+  bottom: -140px; right: -140px;
+  width: 420px; height: 420px;
+  background: radial-gradient(circle at 70% 70%, rgba(99,102,241,.25), transparent 60%);
+  animation-delay: 1.2s;
+}
+
+/* Two-card layout with center separator on wide screens */
+@media (min-width: 980px) {
+  .login {
+    grid-template-columns: minmax(280px, 1fr) minmax(0, 1px) minmax(280px, 1fr);
+    align-items: stretch;
+  }
+}
+
+/* Card */
+.login .item {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 620px;
+  background: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(22px) saturate(140%);
+  box-shadow: var(--shadow-md);
+  padding: clamp(18px, 3.2vw, 32px);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition), background var(--transition);
+}
+
+.login .item:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-strong);
+  background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+}
+
+/* Card heading with gradient text */
+.login .item h2 {
+  margin: 6px 0 8px;
+  font-size: clamp(24px, 3.2vw, 36px);
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: .4px;
+  background: linear-gradient(90deg, #fff, #c7e9ff 40%, #a9c7ff 70%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 1px 2px rgba(0,0,0,.35);
+}
+
+/* Separator between cards */
+.login .separator {
+  display: none;
+}
+
+@media (min-width: 980px) {
+  .login .separator {
+    display: block;
+    align-self: stretch;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,.22) 18%, rgba(255,255,255,.22) 82%, transparent);
+    border-radius: 1px;
+    margin: 10px 0;
+    opacity: .8;
+  }
+}
+
+/* Stack separator on small screens (horizontal line) */
+@media (max-width: 979.98px) {
+  .login .separator {
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,.18) 20%, rgba(255,255,255,.18) 80%, transparent);
+    border-radius: 1px;
+    margin: 2px 0 0;
+    opacity: .8;
+  }
+}
+
+/* Forms */
+.login .item form {
+  margin-top: clamp(12px, 2.2vw, 20px);
+  display: grid;
+  gap: 12px;
+}
+
+/* Inputs */
+.login .item form input[type="text"],
+.login .item form input[type="password"] {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: .3px;
+  color: var(--text-primary);
+  background: rgba(255,255,255,.06);
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.35), 0 6px 14px -10px rgba(0,0,0,.55);
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition), transform var(--transition);
+}
+
+.login .item form input::placeholder {
+  color: var(--text-secondary);
+  opacity: .9;
+  letter-spacing: .8px;
+}
+
+.login .item form input:focus {
+  border-color: rgba(79,139,255,.65);
+  background: rgba(79,139,255,.12);
+  box-shadow: 0 0 0 3px rgba(79,139,255,.28), 0 10px 22px -12px rgba(79,139,255,.6);
+  transform: translateY(-1px);
+}
+
+/* Upload label block (clickable) */
+.login .item form label[for="file"] {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.02)) padding-box,
+    linear-gradient(120deg, var(--accent-1), var(--accent-2)) border-box;
+  border-image: initial;
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition), background var(--transition), filter var(--transition);
+  overflow: hidden;
+}
+
+.login .item form label[for="file"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.22) 45%, rgba(255,255,255,.3) 50%, rgba(255,255,255,.22) 55%, transparent 100%);
+  mix-blend-mode: overlay;
+  transform: translateX(-120%);
+  opacity: 0;
+  transition: transform 700ms ease, opacity 700ms ease;
+  pointer-events: none;
+}
+
+.login .item form label[for="file"]:hover::after {
+  transform: translateX(0%);
+  opacity: 1;
+}
+
+.login .item form label[for="file"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 26px -12px rgba(79,139,255,.55);
+  filter: brightness(1.03);
+}
+
+.login .item form label[for="file"] img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.18);
+  box-shadow: 0 6px 16px -10px rgba(0,0,0,.6);
+  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+}
+
+.login .item form label[for="file"]:hover img {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px -10px rgba(79,139,255,.6);
+}
+
+/* Optional helper texts inside the label (second line) */
+.login .item form label[for="file"] span {
+  display: block;
+}
+
+/* Buttons */
+.login .item form button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  padding: 13px 16px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 1.9px;
+  text-transform: uppercase;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(140deg, var(--accent-1) 0%, var(--accent-2) 50%, var(--accent-3) 100%);
+  background-size: 200% 100%;
+  animation: gradientX 8s ease infinite;
+  box-shadow: 0 14px 30px -12px rgba(79,139,255,.75), 0 0 0 1px rgba(255,255,255,.14) inset;
+  transition: transform 320ms cubic-bezier(.23,1,.32,1), box-shadow var(--transition), filter var(--transition);
+  outline: none;
+}
+
+.login .item form button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 36px -14px rgba(79,139,255,.85);
+  filter: brightness(1.06) saturate(1.05);
+}
+
+.login .item form button:active {
+  transform: translateY(-1px) scale(.98);
+  box-shadow: 0 12px 24px -12px rgba(79,139,255,.7);
+}
+
+.login .item form button:focus-visible {
+  box-shadow: 0 0 0 4px rgba(79,139,255,.45), 0 16px 34px -12px rgba(79,139,255,.8);
+}
+
+/* Small helper animation rings (optional on card) */
+.login .item::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(800px 200px at 20% 0%, rgba(79,139,255,.06), transparent 60%);
+  opacity: .7;
+  pointer-events: none;
+}
+
+/* Animations */
+@keyframes gradientX {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(14px) scale(.98); }
+  60% { opacity: 1; }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Accessibility focus states */
+.login .item:focus-within {
+  border-color: rgba(79,139,255,.6);
+  box-shadow: 0 0 0 3px rgba(79,139,255,.25), var(--shadow-md);
+}
+
+
+/* Make the upload area clearly clickable */
+.login label[for="file"] {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Avatar preview size */
+.login label[for="file"] img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Responsive refinements */
+@media (max-width: 520px) {
+  .login {
+    padding: 16px;
+    gap: 14px;
+  }
+  .login .item {
+    padding: 16px;
+    border-radius: 14px;
+  }
+  .login .item h2 {
+    font-size: 22px;
+  }
+  .login .item form button {
+    padding: 12px 14px;
+    font-size: .78rem;
+    letter-spacing: 1.6px;
+  }
+}
+
+/* Subtle selection color */
+.login ::selection {
+  background: rgba(34,211,238,.22);
+  color: #dff7ff;
+}

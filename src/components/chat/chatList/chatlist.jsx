@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import './chatlist.css'
+import AddUser from './addUser/addUser'
 
 function ChatList() {
 
-  const [addMode, setAddMode] = useState(true)
+  const [addMode, setAddMode] = useState(false)
 
   return (
     <div className='chatList'>
@@ -48,7 +49,7 @@ function ChatList() {
           <p>Hello</p>
         </div>
        </div>
-       
+       {addMode && <AddUser onClose={() => setAddMode(false)} />}
     </div>
   )
 }
