@@ -11,11 +11,14 @@ import {
 import { db } from "../../lib/firebase";
 import { useChatStore } from "../../lib/chatStore.js";
 import { useUserStore } from "../../lib/UserStore.js";
+import { upload } from "../../lib/upload";  // <-- FIX
+
 
 function Chat() {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [chat, setChat] = useState(null);
+  const [img, setImg] = useState({ file: null, url: null });
 
   const { chatId, user } = useChatStore();
   const { currentUser } = useUserStore();
@@ -30,8 +33,7 @@ function Chat() {
   useEffect(() => {
     if (!chatId) return;
 
-    const chatRef = doc(db, "chats", chatId);
-    const unSub = onSnapshot(chatRef, (res) => {
+    const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
       setChat(res.data() || {});
     });
 
@@ -46,17 +48,34 @@ function Chat() {
   if (!chatId)
     return <div className="chat empty">Select a chat to start messaging</div>;
 
+  // UPLOAD IMAGE (stub)
+  const uploadImage = async (file) => {
+  try {
+    const url = await upload(file);
+    return url;                      // CLOUDINARY IMAGE URL
+  } catch (err) {
+    console.log("Upload failed", err);
+    return null;
+  }
+};
+
   // SEND MESSAGE FUNCTION
   const handleSend = async () => {
     if (!text.trim()) return;
 
+    let imgUrl = null;
+
     try {
-      // Add message to chat
+      if (img.file) {
+        imgUrl = await uploadImage(img.file);
+      }
+
       await updateDoc(doc(db, "chats", chatId), {
         messages: arrayUnion({
           senderId: currentUser.id,
           text,
-          createdAt: Date.now(),
+          createdAt: new Date(),
+          ...(imgUrl && { img: imgUrl }),
         }),
       });
 
@@ -68,32 +87,42 @@ function Chat() {
 
         if (snap.exists()) {
           const data = snap.data();
+          const chats = [...data.chats];
 
-          const chatIndex = data.chats.findIndex(
-            (c) => c.chatId === chatId
-          );
-
+          const chatIndex = chats.findIndex((c) => c.chatId === chatId);
           if (chatIndex !== -1) {
-            data.chats[chatIndex].lastMessage = text;
-            data.chats[chatIndex].isSeen = uid === currentUser.id;
-            data.chats[chatIndex].updatedAt = Date.now();
+            chats[chatIndex] = {
+              ...chats[chatIndex],
+              lastMessage: text,
+              isSeen: uid === currentUser.id,
+              updatedAt: Date.now(),
+            };
 
-            await updateDoc(userChatRef, {
-              chats: data.chats,
-            });
+            await updateDoc(userChatRef, { chats });
           }
         }
       }
 
+      // reset input
       setText("");
+      setImg({ file: null, url: null });
     } catch (err) {
       console.log(err);
     }
   };
 
+  const handleImg = (e) => {
+    if (e.target.files[0]) {
+      setImg({
+        file: e.target.files[0],
+        url: URL.createObjectURL(e.target.files[0]),
+      });
+    }
+  };
+
   return (
     <div className="chat">
-      {/* ---------- TOP BAR ---------- */}
+      {/* TOP BAR */}
       <div className="top">
         <div className="user">
           <img src="src/assets/public/avatar.png" alt="avatar" />
@@ -110,7 +139,7 @@ function Chat() {
         </div>
       </div>
 
-      {/* ---------- CHAT MESSAGES ---------- */}
+      {/* CHAT CENTER */}
       <div className="center">
         {chat?.messages?.length > 0 ? (
           chat.messages.map((message, index) => (
@@ -130,13 +159,30 @@ function Chat() {
           <p className="no-msg">No messages yet...</p>
         )}
 
+        {/* Image Preview */}
+        {img.url && (
+          <div className="message own">
+            <div className="texts">
+              <img src={img.url} alt="preview" />
+            </div>
+          </div>
+        )}
+
         <div ref={endRef} />
       </div>
 
-      {/* ---------- BOTTOM INPUT BAR ---------- */}
+      {/* BOTTOM INPUT BAR */}
       <div className="bottom">
         <div className="icons">
-          <img src="./src/assets/public/img.png" alt="image" />
+          <label htmlFor="file">
+            <img src="./src/assets/public/img.png" alt="image" />
+          </label>
+          <input
+            type="file"
+            id="file"
+            style={{ display: "none" }}
+            onChange={handleImg}
+          />
           <img src="./src/assets/public/camera.png" alt="camera" />
           <img src="./src/assets/public/mic.png" alt="mic" />
         </div>
