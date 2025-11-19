@@ -11,7 +11,7 @@ function ChatList() {
   const [chats, setChats] = useState([]);
 
   const { currentUser } = useUserStore();
-  const { changeChat } = useChatStore(); // ✅ GET THE FUNCTION
+  const { chatId, changeChat } = useChatStore(); // ✅ GET THE FUNCTION
 
   useEffect(() => {
     if (!currentUser?.id) return;

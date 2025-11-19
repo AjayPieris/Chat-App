@@ -1,159 +1,169 @@
-import React, {  useEffect, useState } from 'react';
-import './chat.css';
-import EmojiPicker from 'emoji-picker-react';
-import { onSnapshot } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
-import {doc} from 'firebase/firestore';
-import { useChatStore } from '../../lib/chatStore.js';
+import React, { useEffect, useState, useRef } from "react";
+import "./chat.css";
+import EmojiPicker from "emoji-picker-react";
+import {
+  onSnapshot,
+  doc,
+  updateDoc,
+  arrayUnion,
+  getDoc,
+} from "firebase/firestore";
+import { db } from "../../lib/firebase";
+import { useChatStore } from "../../lib/chatStore.js";
+import { useUserStore } from "../../lib/UserStore.js";
 
 function Chat() {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
-  const [chat, setChat] = useState("")
-  const { chatId } = useChatStore();
+  const [chat, setChat] = useState(null);
 
-  const handleEmoji = (emojiData, event) => {
-    setText(prev => prev + emojiData.emoji);
-  };
+  const { chatId, user } = useChatStore();
+  const { currentUser } = useUserStore();
+  const endRef = useRef(null);
 
-  const endRef = React.useRef(null);
-
+  // Auto scroll
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+  }, [chat]);
 
+  // Listen Firestore chat
   useEffect(() => {
-    const unSub = onSnapshot(doc(db , "chats", chatId), (res) => {
-      setChat(res.data());
+    if (!chatId) return;
+
+    const chatRef = doc(db, "chats", chatId);
+    const unSub = onSnapshot(chatRef, (res) => {
+      setChat(res.data() || {});
     });
 
-    return () => unSub();     
+    return () => unSub();
   }, [chatId]);
 
-  console.log(chat);
+  const handleEmoji = (emojiData) => {
+    setText((prev) => prev + emojiData.emoji);
+  };
+
+  // No chat selected
+  if (!chatId)
+    return <div className="chat empty">Select a chat to start messaging</div>;
+
+  // SEND MESSAGE FUNCTION
+  const handleSend = async () => {
+    if (!text.trim()) return;
+
+    try {
+      // Add message to chat
+      await updateDoc(doc(db, "chats", chatId), {
+        messages: arrayUnion({
+          senderId: currentUser.id,
+          text,
+          createdAt: Date.now(),
+        }),
+      });
+
+      const userIDs = [currentUser.id, user.id];
+
+      for (const uid of userIDs) {
+        const userChatRef = doc(db, "userChats", uid);
+        const snap = await getDoc(userChatRef);
+
+        if (snap.exists()) {
+          const data = snap.data();
+
+          const chatIndex = data.chats.findIndex(
+            (c) => c.chatId === chatId
+          );
+
+          if (chatIndex !== -1) {
+            data.chats[chatIndex].lastMessage = text;
+            data.chats[chatIndex].isSeen = uid === currentUser.id;
+            data.chats[chatIndex].updatedAt = Date.now();
+
+            await updateDoc(userChatRef, {
+              chats: data.chats,
+            });
+          }
+        }
+      }
+
+      setText("");
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
-    <div className='chat'>
-      {/* Top Bar */}
-      <div className='top'>
-        <div className='user'>
-          <img src='src/assets/public/avatar.png' alt='avatar' />
+    <div className="chat">
+      {/* ---------- TOP BAR ---------- */}
+      <div className="top">
+        <div className="user">
+          <img src="src/assets/public/avatar.png" alt="avatar" />
           <div className="texts">
-            <span>Vijay</span>
-            <p>Lorem ipsum dolor</p>
+            <span>{user?.username || "User"}</span>
+            <p>Online</p>
           </div>
         </div>
-        <div className='icons'>
-          <img src='./src/assets/public/phone.png' alt='phone' />
-          <img src='./src/assets/public/video.png' alt='video' />
-          <img src='./src/assets/public/info.png' alt='info' />
+
+        <div className="icons">
+          <img src="./src/assets/public/phone.png" alt="phone" />
+          <img src="./src/assets/public/video.png" alt="video" />
+          <img src="./src/assets/public/info.png" alt="info" />
         </div>
       </div>
 
-      {/* Messages */}
-      <div className='center'>
-        <div className='message own'>
-          <div className='texts'>
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora,
-              natus voluptates saepe delectus dolore accusantium aperiam dolorum
-              veniam quos obcaecati dicta eaque dignissimos qui nihil tempore sint,
-              est cum inventore!
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className='message'>
-          <img src='./src/assets/public/avatar.png' alt='avatar' />
-          <div className='texts'>
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora,
-              natus voluptates saepe delectus dolore accusantium aperiam dolorum
-              veniam quos obcaecati dicta eaque dignissimos qui nihil tempore sint,
-              est cum inventore!
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className='message own'>
-          <div className='texts'>
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora,
-              natus voluptates saepe delectus dolore accusantium aperiam dolorum
-              veniam quos obcaecati dicta eaque dignissimos qui nihil tempore sint,
-              est cum inventore!
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className='message'>
-          <img src='./src/assets/public/avatar.png' alt='avatar' />
-          <div className='texts'>
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora,
-              natus voluptates saepe delectus dolore accusantium aperiam dolorum
-              veniam quos obcaecati dicta eaque dignissimos qui nihil tempore sint,
-              est cum inventore!
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className='message own'>
-          <div className='texts'>
-            <img src='./src/assets/public/favicon.png'/>
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora,
-              natus voluptates saepe delectus dolore accusantium aperiam dolorum
-              veniam quos obcaecati dicta eaque dignissimos qui nihil tempore sint,
-              est cum inventore!
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
-        <div className='message'>
-          <img src='./src/assets/public/avatar.png' alt='avatar' />
-          <div className='texts'>
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora,
-              natus voluptates saepe delectus dolore accusantium aperiam dolorum
-              veniam quos obcaecati dicta eaque dignissimos qui nihil tempore sint,
-              est cum inventore!
-            </p>
-            <span>1 min ago</span>
-          </div>
-        </div>
+      {/* ---------- CHAT MESSAGES ---------- */}
+      <div className="center">
+        {chat?.messages?.length > 0 ? (
+          chat.messages.map((message, index) => (
+            <div
+              className={`message ${
+                message.senderId === currentUser.id ? "own" : ""
+              }`}
+              key={index}
+            >
+              <div className="texts">
+                {message.img && <img src={message.img} alt="message" />}
+                <p>{message.text}</p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="no-msg">No messages yet...</p>
+        )}
+
         <div ref={endRef} />
       </div>
 
-      {/* Bottom Input Bar */}
-      <div className='bottom'>
-        <div className='icons'>
-          <img src='./src/assets/public/img.png' alt='image' />
-          <img src='./src/assets/public/camera.png' alt='camera' />
-          <img src='./src/assets/public/mic.png' alt='mic' />
+      {/* ---------- BOTTOM INPUT BAR ---------- */}
+      <div className="bottom">
+        <div className="icons">
+          <img src="./src/assets/public/img.png" alt="image" />
+          <img src="./src/assets/public/camera.png" alt="camera" />
+          <img src="./src/assets/public/mic.png" alt="mic" />
         </div>
 
         <input
-          type='text'
-          placeholder='Type a message'
+          type="text"
+          placeholder="Type a message"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
 
-        <div className='emoji'>
+        <div className="emoji">
           <img
-            src='./src/assets/public/emoji.png'
-            alt='emoji'
-            onClick={() => setOpen(prev => !prev)}
+            src="./src/assets/public/emoji.png"
+            alt="emoji"
+            onClick={() => setOpen((prev) => !prev)}
           />
           {open && (
-            <div className='picker'>
+            <div className="picker">
               <EmojiPicker onEmojiClick={handleEmoji} />
             </div>
           )}
         </div>
 
-        <button className='sendButton'>Send</button>
+        <button className="sendButton" onClick={handleSend}>
+          Send
+        </button>
       </div>
     </div>
   );
