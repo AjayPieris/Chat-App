@@ -104,6 +104,7 @@
 
 .addUser-card input[type="text"]:focus {
   background: #fff;
+  color: black;
   border-color: var(--au-accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--au-accent) 20%, transparent);
 }

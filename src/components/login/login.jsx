@@ -4,16 +4,24 @@ import { ToastContainer, toast } from "react-toastify";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { useUserStore } from "../../lib/UserStore.js";
+
+
 
 import "./login.css";
 import { upload } from "../../lib/upload";
 
 
 function login() {
+
+  const { fetchUser } = useUserStore();
+
   const [avatar, setAvatar] = useState({
     file: null,
     url: "",
   });
+
 
   const [loading, setLoading] = useState(false);
 
@@ -32,13 +40,28 @@ function login() {
   };
   const handleRegister = async (e) => {
   e.preventDefault();
-  setLoading(true)
+  setLoading(true);
+
   const formData = new FormData(e.target);
   const { username, email, password } = Object.fromEntries(formData);
 
   try {
-    const res = await createUserWithEmailAndPassword(auth, email, password);
+    // 🔍 1. Check if username already exists
+    const userRef = collection(db, "users");
+    const q = query(userRef, where("username_lower", "==", username.toLowerCase()));
+    const querySnapshot = await getDocs(q);
 
+    if (!querySnapshot.empty) {
+      toast.error("Username already taken!");
+      setLoading(false);
+      return; // ❌ stop register process here
+    }
+
+    // 🔥 2. Create auth user
+     const res = await createUserWithEmailAndPassword(auth, email, password);
+      fetchUser(res.user.uid);
+
+    // 🔥 3. Avatar required
     if (!avatar.file) {
       toast.error("Please upload an avatar");
       return;
@@ -46,20 +69,23 @@ function login() {
 
     const imgurl = await upload(avatar.file);
 
+    // 🔥 4. Save user in Firestore
     await setDoc(doc(db, "users", res.user.uid), {
       username,
+      username_lower: username.toLowerCase(), // needed for search
       email,
       avatar: imgurl,
       id: res.user.uid,
       blocked: [],
     });
 
+
+    // 🔥 5. Create empty chat list
     await setDoc(doc(db, "userchats", res.user.uid), {
       chats: [],
     });
 
     toast.success("Account created successfully!");
-    
   } catch (err) {
     console.log(err);
     toast.error(err.message);
