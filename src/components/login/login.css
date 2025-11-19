@@ -20,7 +20,7 @@
   --transition: 260ms cubic-bezier(.4,.14,.3,1);
 
   position: relative;
-  min-height: 100vh;
+  min-height: fit-content;
   width: 100%;
   display: grid;
   grid-template-columns: 1fr;
@@ -72,6 +72,7 @@
 
 /* Card */
 .login .item {
+  margin-top: 50px;
   position: relative;
   z-index: 1;
   width: 100%;
@@ -257,6 +258,11 @@
   box-shadow: 0 14px 30px -12px rgba(79,139,255,.75), 0 0 0 1px rgba(255,255,255,.14) inset;
   transition: transform 320ms cubic-bezier(.23,1,.32,1), box-shadow var(--transition), filter var(--transition);
   outline: none;
+
+  &:disabled{
+    cursor: not-allowed;
+    background-color: linear-gradient(140deg, var(--accent-1) 0%, var(--accent-2) 50%, var(--accent-3) 100%) ;
+  }
 }
 
 .login .item form button:hover {
