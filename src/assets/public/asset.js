@@ -14,12 +14,15 @@ import plus from "./plus.png";
 import search from "./search.png";
 import theme from "./theme.png";
 import more from "./more.png";
+import mic from "./mic.png";
+import img from "./img.png";
 
 const assets = {
   avatar,
   arrowDown,
   arrowUp,
   bg,
+  mic,
   camera,
   emojiIcon,
    more,
@@ -30,6 +33,7 @@ const assets = {
   video,
   minus,
   plus,
+  img,
   search,
   theme
 };

@@ -192,7 +192,7 @@ function Chat() {
       <div className="bottom">
         <div className="icons">
           <label htmlFor="file">
-            <img src={assets.camera} alt="camera" />
+            <img src={assets.img} alt="image" />
           </label>
           <input type="file" id="file" onChange={handleImg} disabled={isBlocked} />
           <img src={assets.camera} alt="camera" />
