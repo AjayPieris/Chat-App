@@ -1,13 +1,21 @@
 .chat {
-  flex: 1; /* takes remaining width */
+  flex: 1;
   display: flex;
   flex-direction: column;
-  min-width: 600px;  /* minimum width */
-  max-width: 800px;  /* maximum width */
+  min-width: 600px;
+  max-width: 800px;
   height: 100%;
   background-color: #0f192f;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Make it fluid on smaller screens */
+@media (max-width: 900px) {
+  .chat {
+    min-width: 100%;
+    max-width: 100%;
+  }
 }
 
 /* Top bar */
@@ -53,6 +61,12 @@
   color: #a5a5a5;
 }
 
+.top .icons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
 .top .icons img {
   width: 24px;
   height: 24px;
@@ -73,7 +87,7 @@
   flex-direction: column;
   gap: 10px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.2) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 .center::-webkit-scrollbar {
@@ -81,7 +95,7 @@
 }
 
 .center::-webkit-scrollbar-thumb {
-  background-color: rgba(255,255,255,0.2);
+  background-color: rgba(255, 255, 255, 0.2);
   border-radius: 3px;
 }
 
@@ -134,7 +148,7 @@
 .message.own .texts {
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* Align both image & text to right */
+  align-items: flex-end;
   max-width: 70%;
   gap: 5px;
 }
@@ -145,7 +159,7 @@
   height: auto;
   border-radius: 14px;
   object-fit: cover;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Text bubble under image */
@@ -167,7 +181,6 @@
   width: 100%;
 }
 
-
 /* For consistency in normal message images */
 .message:not(.own) .texts img {
   width: 180px;
@@ -175,39 +188,24 @@
   border-radius: 14px;
   object-fit: cover;
   margin-bottom: 5px;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
-
 
 /* Bottom input area */
 .bottom {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 15px 20px;
+  gap: 12px;
+  padding: 12px 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   background-color: rgba(255, 255, 255, 0.03);
-  position: relative;
 }
 
-.bottom input {
-  flex: 1;
-  padding: 12px 15px;
-  border-radius: 20px;
-  border: none;
-  outline: none;
-  font-size: 14px;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
-.bottom input::placeholder {
-  color: #ccc;
-}
-
-/* Bottom icons */
+/* Left icons (attachments, camera, mic) */
 .bottom .icons {
   display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 10px;
 }
 
@@ -216,57 +214,99 @@
   height: 24px;
   cursor: pointer;
   transition: 0.2s;
+  opacity: 0.9;
 }
 
 .bottom .icons img:hover {
   transform: scale(1.1);
+  opacity: 1;
 }
 
-/* Emoji picker */
-/* Emoji container */
-.bottom .emoji {
+/* Hide native file input */
+.bottom input[type="file"] {
+  display: none;
+}
+
+/* Input wrapper: rounded pill with background */
+.inputWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  padding: 8px 12px;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.inputWrap:focus-within {
+  border-color: #5183fe;
+  box-shadow: 0 0 0 3px rgba(81, 131, 254, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.inputWrap input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 14px;
+  padding: 6px 0;
+}
+
+.inputWrap input::placeholder {
+  color: #ccc;
+}
+
+.inputWrap input:disabled {
+  color: #bbb;
+  cursor: not-allowed;
+}
+
+/* Emoji */
+.emoji {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
-/* Emoji icon */
-.bottom .emoji img {
-  width: 28px;
-  height: 28px;
+.emoji img {
+  width: 24px;
+  height: 24px;
   cursor: pointer;
+  opacity: 0.9;
 }
 
-/* Emoji container */
-.bottom .emoji {
-  position: relative;
+.emoji img:hover {
+  opacity: 1;
 }
 
-/* Emoji icon */
-.bottom .emoji img {
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
-}
-
-/* Emoji picker popup */
 .picker {
   position: absolute;
-  bottom: 50px;           /* above the input */
-  left: 50%;              /* start from center */
-  transform: translateX(-50%) scale(0.8); /* center horizontally & scale down */
-  transform-origin: bottom center;
+  bottom: calc(100% + 10px);
+  right: 0;
   z-index: 100;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   border-radius: 10px;
-  overflow: hidden;
-  background-color: #0f192f; /* match chat background */
+  overflow: hidden; /* remove this if scrollbar appears */
+  background-color: #0f192f;
+
+  /* Add these to prevent scrollbar */
+  display: flex;
+  flex-wrap: wrap;       /* allow emojis to wrap to new line */
+  max-height: none;      /* remove height restriction */
 }
 
 /* Optional: dark mode for emoji picker content */
 .picker > div {
   background-color: #0f192f !important;
   color: white !important;
-}
 
+  display: flex;
+  flex-wrap: wrap;      /* emojis wrap */
+}
 /* Send button */
 .sendButton {
   background-color: #5183fe;
@@ -276,8 +316,25 @@
   border: none;
   cursor: pointer;
   transition: 0.2s;
+  white-space: nowrap;
 }
 
 .sendButton:hover {
   background-color: #3b63d9;
 }
+
+.sendButton:disabled {
+  background-color: #5182feb4;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Blocked state dims input area and send */
+.chat.blocked .inputWrap,
+.chat.blocked .sendButton,
+.chat.blocked .icons img {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ... keep your existing CSS ... */

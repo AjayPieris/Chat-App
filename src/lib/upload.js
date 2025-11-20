@@ -1,6 +1,6 @@
 export async function upload(file) {
-  const CLOUD_NAME = "dayy8te6n";         // your cloud name
-  const UPLOAD_PRESET = "unsigned_preset";       // your unsigned preset name
+  const CLOUD_NAME = "dayy8te6n"; // your cloud name
+  const UPLOAD_PRESET = "unsigned_preset"; // your unsigned preset name
 
   const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
 
@@ -18,7 +18,18 @@ export async function upload(file) {
       throw new Error(data.error?.message || "Upload failed");
     }
 
-    return data.secure_url;
+    // Return more metadata so we can store better info in messages
+    return {
+      url: data.secure_url,
+      publicId: data.public_id,
+      format: data.format,
+      bytes: data.bytes,
+      width: data.width,
+      height: data.height,
+      originalFilename: data.original_filename,
+      // Keep raw in case you need anything else later
+      raw: data,
+    };
   } catch (err) {
     console.error("Cloudinary Upload Error:", err);
     throw err;

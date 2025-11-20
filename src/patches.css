@@ -1,0 +1,71 @@
+.chat.blocked .bottom,
+.chat.blocked textarea,
+.chat.blocked .sendButton {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.message.optimistic {
+  opacity: 0.6;
+}
+
+.chatList .item.active {
+  background: var(--item-active-bg, rgba(0,0,0,0.06));
+}
+
+.chatList .item .badge {
+  color: #2ecc71;
+  font-size: 20px;
+  margin-left: auto;
+  padding-right: 8px;
+}
+
+.chat .preview-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.chat .remove-preview {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.detail .option .title {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail .photos {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+
+.detail .photoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 4px;
+  border-radius: 6px;
+  background: var(--photo-bg, #f5f5f5);
+  margin-bottom: 4px;
+}
+
+.detail .photoItem img {
+  max-height: 40px;
+  border-radius: 4px;
+}
+
+.detail .empty {
+  font-size: 12px;
+  opacity: 0.6;
+}

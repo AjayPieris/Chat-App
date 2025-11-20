@@ -1,30 +1,46 @@
-import { create } from "zustand";                     // import zustand
-import { doc, getDoc } from "firebase/firestore";    // firebase read functions
-import { db } from "./firebase.js";                  // your firestore instance
+import { create } from "zustand";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "./firebase";
 
-export const useUserStore = create((set) => ({       // create a zustand store
-  currentUser: null,                                 // store logged-in user data
-  isLoading: true,                                   // loading state for UI
+export const useUserStore = create((set) => ({
+  currentUser: null,
+  isLoading: true,
 
-  fetchUser: async (uid) => {                        // function to get user data
-    if (!uid)                                        // if no UID given
-      return set({ currentUser: null, isLoading: false });  
-
-    set({ isLoading: true });                        // start loading
-
+  fetchUser: async (uid) => {
+    if (!uid) {
+      return set({ currentUser: null, isLoading: false });
+    }
+    set({ isLoading: true });
     try {
-      const docRef = doc(db, "users", uid);          // reference to users/{uid}
-      const docSnap = await getDoc(docRef);          // fetch the document
-
-      if (docSnap.exists()) {                        // if user found in firestore
-        set({ currentUser: docSnap.data(), isLoading: false });
-      } else {                                       
-        console.log("No such document!");            // no user found
+      const docRef = doc(db, "users", uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (!data.blocked) data.blocked = [];
+        set({
+          currentUser: { id: docSnap.id, ...data },
+          isLoading: false,
+        });
+      } else {
         set({ currentUser: null, isLoading: false });
       }
     } catch (error) {
-      console.error("Failed to fetch user:", error); // if fetch fails
-      set({ currentUser: null, isLoading: false });  // clear user + stop loading
+      console.error("Failed to fetch user:", error);
+      set({ currentUser: null, isLoading: false });
     }
   },
+
+  updateBlockedLocal: (targetUserId, shouldBlock) =>
+    set((state) => {
+      const prev = state.currentUser;
+      if (!prev) return state;
+      const existing = prev.blocked || [];
+      const updated = shouldBlock
+        ? Array.from(new Set([...existing, targetUserId]))
+        : existing.filter((id) => id !== targetUserId);
+      return {
+        ...state,
+        currentUser: { ...prev, blocked: updated },
+      };
+    }),
 }));
