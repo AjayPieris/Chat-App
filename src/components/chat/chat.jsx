@@ -13,6 +13,7 @@ import { useChatStore } from "../../lib/chatStore";
 import { useUserStore } from "../../lib/UserStore";
 import { upload } from "../../lib/upload";
 
+
 function Chat() {
   const [openEmoji, setOpenEmoji] = useState(false);
   const [text, setText] = useState("");
