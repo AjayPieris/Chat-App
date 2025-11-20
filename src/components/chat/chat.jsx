@@ -12,7 +12,7 @@ import { db } from "../../lib/firebase";
 import { useChatStore } from "../../lib/chatStore";
 import { useUserStore } from "../../lib/UserStore";
 import { upload } from "../../lib/upload";
-
+import assets from "../../public/asset";
 
 function Chat() {
   const [openEmoji, setOpenEmoji] = useState(false);
@@ -171,7 +171,7 @@ function Chat() {
           </div>
         </div>
         <div className="icons">
-          <img src="./src/assets/public/phone.png" alt="phone" />
+          <img src={assets.phone} alt="phone" />
           <img src="./src/assets/public/video.png" alt="video" />
           <img src="./src/assets/public/info.png" alt="info" />
         </div>
