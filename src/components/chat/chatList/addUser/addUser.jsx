@@ -16,6 +16,7 @@ import {
 import { db } from "../../../../lib/firebase.js";
 import { useUserStore } from "../../../../lib/UserStore.js";
 import { ToastContainer, toast } from "react-toastify";
+import assets from "../../../../assets/public/asset";
 
 function AddUser({ onClose }) {
   const [user, setUser] = useState(null);
@@ -52,69 +53,66 @@ function AddUser({ onClose }) {
   };
 
   const handleAdd = async () => {
-  if (!user) return;
+    if (!user) return;
 
-  try {
-    const otherUserChatDoc = doc(db, "userChats", user.id);
-    const myUserChatDoc = doc(db, "userChats", currentUser.id);
+    try {
+      const otherUserChatDoc = doc(db, "userChats", user.id);
+      const myUserChatDoc = doc(db, "userChats", currentUser.id);
 
-    // Create docs if missing
-    if (!(await getDoc(otherUserChatDoc)).exists()) {
-      await setDoc(otherUserChatDoc, { chats: [] });
+      // Create docs if missing
+      if (!(await getDoc(otherUserChatDoc)).exists()) {
+        await setDoc(otherUserChatDoc, { chats: [] });
+      }
+      if (!(await getDoc(myUserChatDoc)).exists()) {
+        await setDoc(myUserChatDoc, { chats: [] });
+      }
+
+      // Fetch current chats
+      const myChatsSnap = await getDoc(myUserChatDoc);
+      const myChats = myChatsSnap.data().chats || [];
+
+      // Check if chat already exists with this user
+      const exists = myChats.some((chat) => chat.receiverId === user.id);
+
+      if (exists) {
+        toast.error("Chat with this user already exists!");
+        return;
+      }
+
+      // Create a new chat document
+      const newChatRef = doc(collection(db, "chats"));
+      await setDoc(newChatRef, {
+        createdAt: serverTimestamp(),
+        messages: [],
+      });
+
+      // Add chat to both users
+      await updateDoc(otherUserChatDoc, {
+        chats: arrayUnion({
+          chatId: newChatRef.id,
+          lastMessage: "",
+          receiverId: currentUser.id,
+          updatedAt: Date.now(),
+        }),
+      });
+
+      await updateDoc(myUserChatDoc, {
+        chats: arrayUnion({
+          chatId: newChatRef.id,
+          lastMessage: "",
+          receiverId: user.id,
+          updatedAt: Date.now(),
+        }),
+      });
+
+      toast.success("User added successfully!");
+      onClose();
+      setUser(null);
+    } catch (error) {
+      console.error("Error adding user to chat:", error);
+      toast.error("Failed to add user to chat.");
     }
-    if (!(await getDoc(myUserChatDoc)).exists()) {
-      await setDoc(myUserChatDoc, { chats: [] });
-    }
-
-    // Fetch current chats
-    const myChatsSnap = await getDoc(myUserChatDoc);
-    const myChats = myChatsSnap.data().chats || [];
-
-    // Check if chat already exists with this user
-    const exists = myChats.some(
-      (chat) => chat.receiverId === user.id
-    );
-
-    if (exists) {
-      toast.error("Chat with this user already exists!");
-      return;
-    }
-
-    // Create a new chat document
-    const newChatRef = doc(collection(db, "chats"));
-    await setDoc(newChatRef, {
-      createdAt: serverTimestamp(),
-      messages: [],
-    });
-
-    // Add chat to both users
-    await updateDoc(otherUserChatDoc, {
-      chats: arrayUnion({
-        chatId: newChatRef.id,
-        lastMessage: "",
-        receiverId: currentUser.id,
-        updatedAt: Date.now(),
-      }),
-    });
-
-    await updateDoc(myUserChatDoc, {
-      chats: arrayUnion({
-        chatId: newChatRef.id,
-        lastMessage: "",
-        receiverId: user.id,
-        updatedAt: Date.now(),
-      }),
-    });
-
-    toast.success("User added successfully!");
-    onClose();
-    setUser(null);
-
-  } catch (error) {
-    console.error("Error adding user to chat:", error);
-    toast.error("Failed to add user to chat.");
-  }
-};
+  };
 
   // PORTAL UI
   const content = (
@@ -137,7 +135,11 @@ function AddUser({ onClose }) {
           <div className="user">
             <div className="detail">
               <img
-                src={user.avatar || "/default-avatar.png"}
+                src={
+                  (typeof user?.avatar === "string"
+                    ? user.avatar
+                    : user?.avatar?.url) || assets.avatar
+                }
                 alt="User Avatar"
               />
               <span>{user.username}</span>
@@ -147,7 +149,7 @@ function AddUser({ onClose }) {
           </div>
         )}
       </div>
-       <ToastContainer position="top-right" autoClose={2000} />
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 

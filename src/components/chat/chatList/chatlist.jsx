@@ -5,7 +5,7 @@ import { useUserStore } from "../../../lib/UserStore";
 import { useChatStore } from "../../../lib/chatStore";
 import { onSnapshot, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../lib/firebase";
-import assets from "../../../assets/public/asset" 
+import assets from "../../../assets/public/asset";
 
 function ChatList() {
   const [addMode, setAddMode] = useState(false);
@@ -82,9 +82,7 @@ function ChatList() {
       </div>
 
       {filteredChats.length === 0 && (
-        <p className="no-chats">
-          No chats {search ? "match search" : "yet"}
-        </p>
+        <p className="no-chats">No chats {search ? "match search" : "yet"}</p>
       )}
 
       {filteredChats.map((chat) => {
@@ -96,7 +94,11 @@ function ChatList() {
             onClick={() => handleSelect(chat)}
           >
             <img
-              src={chat.user?.avatar || assets.avatar}
+              src={
+                (typeof chat.user?.avatar === "string"
+                  ? chat.user?.avatar
+                  : chat.user?.avatar?.url) || assets.avatar
+              }
               alt="User Avatar"
             />
             <div className="texts">

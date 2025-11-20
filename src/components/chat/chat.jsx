@@ -1,7 +1,13 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./chat.css";
 import EmojiPicker, { EmojiStyle, Theme } from "emoji-picker-react";
-import { onSnapshot, doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
+import {
+  onSnapshot,
+  doc,
+  updateDoc,
+  arrayUnion,
+  getDoc,
+} from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useChatStore } from "../../lib/chatStore";
 import { useUserStore } from "../../lib/UserStore";
@@ -14,8 +20,13 @@ function Chat() {
   const [chat, setChat] = useState(null);
   const [img, setImg] = useState({ file: null, url: null });
 
-  const { chatId, user, isCurrentUserBlocked, isReceiverBlocked, recomputeBlockFlags } =
-    useChatStore();
+  const {
+    chatId,
+    user,
+    isCurrentUserBlocked,
+    isReceiverBlocked,
+    recomputeBlockFlags,
+  } = useChatStore();
   const { currentUser } = useUserStore();
   const endRef = useRef(null);
 
@@ -139,7 +150,14 @@ function Chat() {
       {/* TOP BAR */}
       <div className="top">
         <div className="user">
-          <img src={user?.avatar || assets.avatar} alt="avatar" />
+          <img
+            src={
+              (typeof user?.avatar === "string"
+                ? user.avatar
+                : user?.avatar?.url) || assets.avatar
+            }
+            alt="avatar"
+          />
           <div className="texts">
             <span>{user?.username || "User"}</span>
             <p>
@@ -163,7 +181,8 @@ function Chat() {
         {chat?.messages?.length > 0 ? (
           chat.messages.map((message, index) => {
             const own = message.senderId === currentUser.id;
-            const imgSrc = typeof message.img === "string" ? message.img : message.img?.url;
+            const imgSrc =
+              typeof message.img === "string" ? message.img : message.img?.url;
             return (
               <div className={`message ${own ? "own" : ""}`} key={index}>
                 <div className="texts">
@@ -194,7 +213,12 @@ function Chat() {
           <label htmlFor="file">
             <img src={assets.img} alt="image" />
           </label>
-          <input type="file" id="file" onChange={handleImg} disabled={isBlocked} />
+          <input
+            type="file"
+            id="file"
+            onChange={handleImg}
+            disabled={isBlocked}
+          />
           <img src={assets.camera} alt="camera" />
           <img src={assets.mic} alt="mic" />
         </div>
@@ -242,7 +266,11 @@ function Chat() {
           </div>
         </div>
 
-        <button className="sendButton" onClick={handleSend} disabled={!text.trim() || isBlocked}>
+        <button
+          className="sendButton"
+          onClick={handleSend}
+          disabled={!text.trim() || isBlocked}
+        >
           Send
         </button>
       </div>

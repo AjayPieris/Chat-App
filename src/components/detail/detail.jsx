@@ -52,7 +52,14 @@ function Detail() {
     <div className="detail">
       {/* USER HEADER */}
       <div className="user">
-        <img src={user?.avatar || "/default-avatar.png"} alt="avatar" />
+        <img
+          src={
+            (typeof user?.avatar === "string"
+              ? user.avatar
+              : user?.avatar?.url) || assets.avatar
+          }
+          alt="avatar"
+        />
         <div className="userText">
           <h2>{user?.username || "User"}</h2>
           <p>
@@ -68,7 +75,7 @@ function Detail() {
       <div className="info">
         <div className="sections">
           {/* SETTINGS */}
-            <div className={`sectionCard ${openSettings ? "open" : ""}`}>
+          <div className={`sectionCard ${openSettings ? "open" : ""}`}>
             <button
               className="sectionHeader"
               onClick={() => setOpenSettings((o) => !o)}
