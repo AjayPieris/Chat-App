@@ -125,7 +125,7 @@ function Chat() {
       {/* TOP BAR */}
       <div className="top">
         <div className="user">
-          <img src="src/assets/public/avatar.png" alt="avatar" />
+          <img src={user?.avatar} alt="avatar" />
           <div className="texts">
             <span>{user?.username || "User"}</span>
             <p>Online</p>
