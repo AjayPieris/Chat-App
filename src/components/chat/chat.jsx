@@ -1,18 +1,12 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./chat.css";
 import EmojiPicker, { EmojiStyle, Theme } from "emoji-picker-react";
-import {
-  onSnapshot,
-  doc,
-  updateDoc,
-  arrayUnion,
-  getDoc,
-} from "firebase/firestore";
+import { onSnapshot, doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useChatStore } from "../../lib/chatStore";
 import { useUserStore } from "../../lib/UserStore";
 import { upload } from "../../lib/upload";
-import assets from "../../public/asset";
+import assets from "../../assets/public/asset";
 
 function Chat() {
   const [openEmoji, setOpenEmoji] = useState(false);
@@ -20,17 +14,11 @@ function Chat() {
   const [chat, setChat] = useState(null);
   const [img, setImg] = useState({ file: null, url: null });
 
-  const {
-    chatId,
-    user,
-    isCurrentUserBlocked,
-    isReceiverBlocked,
-    recomputeBlockFlags,
-  } = useChatStore();
+  const { chatId, user, isCurrentUserBlocked, isReceiverBlocked, recomputeBlockFlags } =
+    useChatStore();
   const { currentUser } = useUserStore();
   const endRef = useRef(null);
 
-  // Old-style emoji look: TWITTER (Twemoji) or NATIVE
   const EMOJI_STYLE = EmojiStyle.TWITTER;
 
   const handleEmoji = (emojiData) => {
@@ -38,12 +26,12 @@ function Chat() {
     setOpenEmoji(false);
   };
 
-  // Auto scroll on new messages
+  // Auto scroll to bottom on new messages
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat?.messages]);
 
-  // Listen to the chat document
+  // Listen to chat document
   useEffect(() => {
     if (!chatId) {
       setChat(null);
@@ -57,7 +45,7 @@ function Chat() {
 
   const uploadImage = async (file) => {
     try {
-      return await upload(file); // may return string URL or an object with { url, ... }
+      return await upload(file);
     } catch (err) {
       console.log("Upload failed", err);
       return null;
@@ -71,9 +59,7 @@ function Chat() {
     let uploadedImg = null;
 
     try {
-      if (img.file) {
-        uploadedImg = await uploadImage(img.file);
-      }
+      if (img.file) uploadedImg = await uploadImage(img.file);
 
       const messageObj = {
         senderId: currentUser.id,
@@ -81,7 +67,6 @@ function Chat() {
         createdAt: new Date(),
       };
 
-      // Support both string URL and object payload from upload()
       if (uploadedImg) {
         messageObj.img = uploadedImg.url ? uploadedImg : uploadedImg;
       }
@@ -90,7 +75,7 @@ function Chat() {
         messages: arrayUnion(messageObj),
       });
 
-      // Update chat previews in userChats for both users
+      // Update chat previews for both users
       const userIDs = [currentUser.id, user.id];
       for (const uid of userIDs) {
         const userChatRef = doc(db, "userChats", uid);
@@ -137,11 +122,7 @@ function Chat() {
     }
   };
 
-  const removePreview = () =>
-    setImg({
-      file: null,
-      url: null,
-    });
+  const removePreview = () => setImg({ file: null, url: null });
 
   if (!chatId) {
     return (
@@ -158,7 +139,7 @@ function Chat() {
       {/* TOP BAR */}
       <div className="top">
         <div className="user">
-          <img src={user?.avatar || "/default-avatar.png"} alt="avatar" />
+          <img src={user?.avatar || assets.avatar} alt="avatar" />
           <div className="texts">
             <span>{user?.username || "User"}</span>
             <p>
@@ -172,8 +153,8 @@ function Chat() {
         </div>
         <div className="icons">
           <img src={assets.phone} alt="phone" />
-          <img src="./src/assets/public/video.png" alt="video" />
-          <img src="./src/assets/public/info.png" alt="info" />
+          <img src={assets.video} alt="video" />
+          <img src={assets.info} alt="info" />
         </div>
       </div>
 
@@ -182,10 +163,7 @@ function Chat() {
         {chat?.messages?.length > 0 ? (
           chat.messages.map((message, index) => {
             const own = message.senderId === currentUser.id;
-            const imgSrc =
-              typeof message.img === "string"
-                ? message.img
-                : message.img?.url;
+            const imgSrc = typeof message.img === "string" ? message.img : message.img?.url;
             return (
               <div className={`message ${own ? "own" : ""}`} key={index}>
                 <div className="texts">
@@ -214,16 +192,11 @@ function Chat() {
       <div className="bottom">
         <div className="icons">
           <label htmlFor="file">
-            <img src="./src/assets/public/img.png" alt="image" />
+            <img src={assets.camera} alt="camera" />
           </label>
-          <input
-            type="file"
-            id="file"
-            onChange={handleImg}
-            disabled={isBlocked}
-          />
-          <img src="./src/assets/public/camera.png" alt="camera" />
-          <img src="./src/assets/public/mic.png" alt="mic" />
+          <input type="file" id="file" onChange={handleImg} disabled={isBlocked} />
+          <img src={assets.camera} alt="camera" />
+          <img src={assets.mic} alt="mic" />
         </div>
 
         <div className="inputWrap">
@@ -249,7 +222,7 @@ function Chat() {
 
           <div className="emoji">
             <img
-              src="./src/assets/public/emoji.png"
+              src={assets.emojiIcon}
               alt="emoji"
               onClick={() => setOpenEmoji((prev) => !prev)}
             />
@@ -269,11 +242,7 @@ function Chat() {
           </div>
         </div>
 
-        <button
-          className="sendButton"
-          onClick={handleSend}
-          disabled={!text.trim() || isBlocked}
-        >
+        <button className="sendButton" onClick={handleSend} disabled={!text.trim() || isBlocked}>
           Send
         </button>
       </div>

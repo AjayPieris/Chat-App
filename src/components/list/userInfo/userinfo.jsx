@@ -1,6 +1,7 @@
 import React from 'react'
 import './userinfo.css'
 import { useUserStore } from '../../../lib/UserStore.js';
+import assets from '../../../assets/public/asset.js'
 
 function UserInfo() {
   const { currentUser } = useUserStore();
@@ -11,9 +12,9 @@ function UserInfo() {
         <h2>{currentUser.username}</h2>
       </div>
       <div className='icons'>
-        <img src='src\assets\public\more.png'/>
-        <img src='src\assets\public\video.png'/>
-        <img src='src\assets\public\edit.png' />
+        <img src={assets.more} alt="more" />
+        <img src={assets.video} alt="video" />
+        <img src={assets.edit} alt="edit" />
       </div>
     </div>
   )

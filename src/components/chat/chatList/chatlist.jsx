@@ -5,11 +5,13 @@ import { useUserStore } from "../../../lib/UserStore";
 import { useChatStore } from "../../../lib/chatStore";
 import { onSnapshot, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../lib/firebase";
+import assets from "../../../assets/public/asset" 
 
 function ChatList() {
   const [addMode, setAddMode] = useState(false);
   const [chats, setChats] = useState([]);
   const [search, setSearch] = useState("");
+
   const { currentUser, isLoading } = useUserStore();
   const { changeChat, chatId } = useChatStore();
 
@@ -22,6 +24,7 @@ function ChatList() {
         setChats([]);
         return;
       }
+
       const items = snapshot.data().chats || [];
       const chatPromises = items.map(async (item) => {
         const userDocRef = doc(db, "users", item.receiverId);
@@ -33,6 +36,7 @@ function ChatList() {
             : null,
         };
       });
+
       const chatData = await Promise.all(chatPromises);
       setChats(
         chatData.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
@@ -60,7 +64,7 @@ function ChatList() {
     <div className="chatList">
       <div className="search">
         <div className="searchbar">
-          <img src="./src/assets/public/search.png" alt="search" />
+          <img src={assets.search} alt="search" />
           <input
             type="text"
             placeholder="Search"
@@ -70,19 +74,17 @@ function ChatList() {
         </div>
 
         <img
-          src={
-            addMode
-              ? "./src/assets/public/minus.png"
-              : "./src/assets/public/plus.png"
-          }
+          src={addMode ? assets.minus : assets.plus}
           className="add"
-            onClick={() => setAddMode((prev) => !prev)}
+          onClick={() => setAddMode((prev) => !prev)}
           alt="add"
         />
       </div>
 
       {filteredChats.length === 0 && (
-        <p className="no-chats">No chats {search ? "match search" : "yet"}</p>
+        <p className="no-chats">
+          No chats {search ? "match search" : "yet"}
+        </p>
       )}
 
       {filteredChats.map((chat) => {
@@ -94,7 +96,7 @@ function ChatList() {
             onClick={() => handleSelect(chat)}
           >
             <img
-              src={chat.user?.avatar || "/default-avatar.png"}
+              src={chat.user?.avatar || assets.avatar}
               alt="User Avatar"
             />
             <div className="texts">

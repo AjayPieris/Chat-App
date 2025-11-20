@@ -5,6 +5,7 @@ import { useChatStore } from "../../lib/chatStore";
 import { useUserStore } from "../../lib/UserStore";
 import { arrayRemove, arrayUnion, updateDoc, doc } from "firebase/firestore";
 import SharedPhotos from "./shardPhotos"; // change to "./shardPhotos" if your filename differs
+import assets from "../../assets/public/asset";
 
 function Detail() {
   const {
@@ -75,7 +76,7 @@ function Detail() {
             >
               <span>Chat Settings</span>
               <img
-                src="./src/assets/public/arrowDown.png"
+                src={assets.arrowDown}
                 alt="toggle"
                 className={openSettings ? "arrow rotated" : "arrow"}
               />
@@ -106,7 +107,7 @@ function Detail() {
             >
               <span>Shared Files</span>
               <img
-                src="./src/assets/public/arrowDown.png"
+                src={assets.arrowDown}
                 alt="toggle"
                 className={openFiles ? "arrow rotated" : "arrow"}
               />
@@ -132,7 +133,7 @@ function Detail() {
             >
               <span>Shared Photos</span>
               <img
-                src="./src/assets/public/arrowDown.png"
+                src={assets.arrowDown}
                 alt="toggle"
                 className={openPhotos ? "arrow rotated" : "arrow"}
               />
